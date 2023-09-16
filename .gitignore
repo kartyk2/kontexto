@@ -4,4 +4,10 @@ env
 #pychache
 backend/__pycache__
 
+#python notebook
+hehe.ipynb
 
+#dataset, modal and other data files
+Cell_Phones_and_Accessories_5.json
+word2vec-amazon-cell-accessories-reviews-short.model
+data.txt
