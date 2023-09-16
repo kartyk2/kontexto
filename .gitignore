@@ -1,0 +1,7 @@
+#env
+env
+
+#pychache
+backend/__pycache__
+
+
