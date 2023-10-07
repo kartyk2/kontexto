@@ -2,7 +2,6 @@ from fastapi import APIRouter, HTTPException
 import gensim
 from typing import List
 import traceback
-import sys
 
 api_router = APIRouter()
 
@@ -26,8 +25,6 @@ async def get_similar(word: str):
 @api_router.post("/guess")
 async def match_guess(word: str):
     try:
-        raise HTTPException(status_code= 405, detail= "HEHE")
-        z = 10 / 0
         if word in my_model.wv:
             res = my_model.wv.similarity(w1= word, w2 = "hell")
             return {"similarity": float(res)}
