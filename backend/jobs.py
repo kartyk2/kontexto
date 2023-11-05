@@ -7,16 +7,16 @@ games_collection = database.get_collection(Constants.COLLECTION)
 
 
 def pick_new_word():
-    """
+    """ 
         picks a new word that the scheduler will add a new game in the database
         -- for now it only retuns a hardcoded word--
     """
-    return "Hello"
+    return "hello"
 
 
 async def add_new_game():
     """
-    makea new game and add it to the game table in DB
+    make a new game and add it to the game table in DB
     """ 
 
     print("adding a new game to the game table")

@@ -3,4 +3,4 @@ from backend.jobs import add_new_game
 
 sched= AsyncIOScheduler()
 
-sched.add_job(add_new_game, trigger= 'interval', minutes= 10)
+sched.add_job(add_new_game, trigger= 'interval', minutes= 1)
