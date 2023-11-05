@@ -13,10 +13,12 @@ async def root():
  
 @app.on_event('startup')
 def startup_chores():
+    print("getting started")
     sched.start()
 
 
 @app.on_event('shutdown')
 def startup_chores():
+    print("shutting_down")
     sched.shutdown()
 

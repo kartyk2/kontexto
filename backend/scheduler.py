@@ -1,8 +1,6 @@
-from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from backend.jobs import add_new_game
 
-sched= BackgroundScheduler()
+sched= AsyncIOScheduler()
 
-sched.add_job(add_new_game, trigger= 'interval', minutes= 3)
-
-
+sched.add_job(add_new_game, trigger= 'interval', minutes= 10)
