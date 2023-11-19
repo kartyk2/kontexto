@@ -39,6 +39,15 @@ async def match_guess(word: str, game: int):
         target = target_document.get('target')
         if word in my_model.wv:
             res = my_model.wv.similarity(w1= word, w2 = target)
+            """
+                Need to find a way to show this as a number.
+                0 being exact match
+                1 being the closest match
+                .
+                .
+                . 
+                and so on
+            """
             return {"similarity": float(res)}
         else:
             raise HTTPException(status_code= 404, detail="i don't know this word")
@@ -46,3 +55,12 @@ async def match_guess(word: str, game: int):
         return JSONResponse(status_code= 500, content= traceback.format_exception(error, limit= 1))
 
 
+@api_router.get("/hint")
+async def get_hint(game_id: int, closest: int):
+    """
+        for game = game_id, return a hint when the user's best guess had closeness score of closest
+    
+    """
+
+
+   
