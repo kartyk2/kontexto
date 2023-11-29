@@ -4,41 +4,19 @@ from dotenv import dotenv_values
 #place the .env files in the same dir as main
 
 creds = dotenv_values(".env")
-client = AsyncIOMotorClient(creds.get("DB_CONNECTION"))
+
+cloud_uri = creds.get("CLOUD_URI")
+client = AsyncIOMotorClient(creds.get("CLOUD_URI"))
 
 DATABASE = creds.get("DB_NAME")
 GAMES = "games"
 
+class ConnectionManager:
+    def __init__(self) -> None:
+        self.client = AsyncIOMotorClient(cloud_uri)
 
-# db = client.get_database(DATABASE)
-# games_collection = db.get_collection(GAMES)
+    def __enter__(self):
+        return self.client
 
-# async def get_game():
-#     game = await games_collection.find()
-#     return game
-
-# game = get_game()
-# print(game , type(game))
-
-# import asyncio
-# from motor.motor_asyncio import AsyncIOMotorClient
-
-# Assuming you have defined DATABASE and GAMES variables
-
-# async def get_game():
-#     # with AsyncIOMotorClient() as client:
-#     db = client.get_database(DATABASE)
-#     games_collection = db.get_collection(GAMES)
-#     game = games_collection.find()  # Modify the query as per your needs
-#     return game
-
-# async def main():
-#     games = await get_game()
-#     async for game in games:
-#         print(game, type(game))
-
-# # Run the asynchronous function within an event loop
-# if __name__ == "__main__":
-#     asyncio.run(main())
-
-
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.client.close()
