@@ -1,8 +1,9 @@
 from pydantic import BaseModel
 
 class Game(BaseModel):
-    game: int
+    game_id: int
     target: str
+    hints: dict[str, int]
 
 
 class SuperUserCreds(BaseModel):

@@ -1,6 +1,3 @@
 class Constants:
-
     DATABASE: str = "kontexto"
-    COLLECTION: str = "games"
-    
-     
+    GAMES_COLLECTION: str = "games"

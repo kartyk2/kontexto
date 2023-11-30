@@ -1,8 +1,6 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 from dotenv import dotenv_values
 
-#place the .env files in the same dir as main
-
 creds = dotenv_values(".env")
 
 cloud_uri = creds.get("CLOUD_URI")
