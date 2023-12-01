@@ -1,8 +1,9 @@
 from fastapi import APIRouter, HTTPException
+from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 import gensim
 from typing import List
-import traceback
+import traceback, json, math
 from backend.config.database import client
 from backend.config.constants import Constants
 
@@ -17,6 +18,23 @@ collection = Constants.GAMES_COLLECTION
 
 game_collection = client.get_database(database).get_collection(collection)
 
+@api_router.get("/all_games")
+async def get_All_games():
+    async_cursor = game_collection.find({}, {"_id":0, "game_id":1})
+    
+    all_games = await async_cursor.to_list(None)
+    return all_games
+
+
+@api_router.get("/latest_game")
+async def get_most_recent_game():
+    most_recent_game = await game_collection.find_one({}, {"_id":0, "game_id":1}, sort=[("game_id", -1)])
+    
+    if most_recent_game:
+        return most_recent_game
+    else:
+        return {"message": "No games found"}
+
 
 @api_router.get("/similar", response_model=List[str])
 async def get_similar(word: str):
@@ -29,30 +47,29 @@ async def get_similar(word: str):
             raise HTTPException(status_code=404, detail="i don't know this word")
 
     except Exception as error:
-        raise HTTPException(500, detail=traceback.format_exception_only(error))
+        raise HTTPException(500, detail=traceback.format_exc())
 
 
 @api_router.get("/guess")
-async def match_guess(word: str, game: int):
+async def match_guess(word: str, game_id: str):
     try:
-        word = word.lower()
-        target_document = await game_collection.find_one(filter={"game": game})
-        game = target_document.get("game")
-        target = target_document.get("target")
+        word = word.lower().strip()
         if word in my_model.wv:
-            res = my_model.wv.similarity(w1=word, w2=target)
-            """
-                Need to find a way to show this as a number.
-                0 being exact match
-                1 being the closest match
-                .
-                .
-                . 
-                and so on
-            """
-            return {"similarity": float(res)}
+            hints: dict = await game_collection.find_one(
+                {"game_id": game_id},
+                {"hints": 1, "_id": 0 } 
+            )
+            if hints:
+                hints= hints.get(Constants.HINTS)
+                rank = hints.get(word, 10001)
+                return rank
+
+            else:
+                return JSONResponse(status_code= 404, content= "no game found for this id")
+        
         else:
-            raise HTTPException(status_code=404, detail="i don't know this word")
+            return JSONResponse(status_code= 400, content= "i dont know this word")
+
     except Exception as error:
         return JSONResponse(
             status_code=500, content=traceback.format_exception(error, limit=1)
@@ -60,8 +77,21 @@ async def match_guess(word: str, game: int):
 
 
 @api_router.get("/hint")
-async def get_hint(game_id: int, closest: int):
+async def get_hint(game_id: str, closest: int|None = None):
     """
     for game = game_id, return a hint when the user's best guess had closeness score of closest
 
     """
+    hint_index = Constants.MAX_HINTS if not closest else math.ceil(closest*2/3)
+    hints: dict = await game_collection.find_one(
+        {"game_id": game_id},
+        {"hints": 1, "_id": 0 } 
+    )
+    if hints:
+        hints= hints.get(Constants.HINTS)
+        for hint, rank in hints.items():
+            if rank == hint_index:
+                return hint
+            
+    else:
+        return JSONResponse(status_code= 404, content= "no game found for this id")

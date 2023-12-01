@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 class Game(BaseModel):
-    game_id: int
+    game_id: str
     target: str
     hints: dict[str, int]
 
