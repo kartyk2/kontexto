@@ -5,7 +5,7 @@ from backend.router.game_api import my_model
 from gensim.models import Word2Vec
 import traceback, random, datetime
 
-common_word_model = Word2Vec.load("common_words.model")
+common_word_model = Word2Vec.load("word2vec-amazon-cell-accessories-reviews-short.model")
 
 database = client.get_database(Constants.DATABASE)
 games_collection = database.get_collection(Constants.GAMES_COLLECTION)
@@ -15,7 +15,6 @@ games_collection = database.get_collection(Constants.GAMES_COLLECTION)
 def pick_new_word():
     """
     picks a new word that the scheduler will add a new game in the database
-    -- for now it only retuns a hardcoded word --
     """
     vocab_size = common_word_model.wv.__len__()
     articles_and_prepositions = "a, an, the, about, above, across, after, against, along, amid, among, around, as, at, before, behind, below, beneath, beside, between, beyond, but, by, concerning, considering, despite, down, during, except, for, from, in, inside, into, like, near, next, off, on, onto, out, outside, over, past, regarding, round, since, through, throughout, till, to, toward, under, underneath, until, unto, up, upon, with, within, without"
@@ -41,6 +40,7 @@ async def add_new_game():
     word_similarity_mapping = {
         similar_words[i][0]: i+1 for i in range(len(similar_words))
     }
+    word_similarity_mapping[word]= 0
 
     try:
         _game = await games_collection.insert_one(

@@ -62,13 +62,13 @@ async def match_guess(word: str, game_id: str):
             if hints:
                 hints= hints.get(Constants.HINTS)
                 rank = hints.get(word, 10001)
-                return rank
+                return rank if rank != 0 else "WooooohhHH!!!!!!! You won..."
 
             else:
-                return JSONResponse(status_code= 404, content= "no game found for this id")
+                return JSONResponse(status_code= 404, content= "OooppSss.... wrong game")
         
         else:
-            return JSONResponse(status_code= 400, content= "i dont know this word")
+            return JSONResponse(status_code= 400, content= "Noo.. I  don't know this word")
 
     except Exception as error:
         return JSONResponse(
@@ -94,4 +94,4 @@ async def get_hint(game_id: str, closest: int|None = None):
                 return hint
             
     else:
-        return JSONResponse(status_code= 404, content= "no game found for this id")
+        return JSONResponse(status_code= 404, content= "OooppSss.... wrong game")
